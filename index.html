@@ -1,349 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Flores and Damon's Car Quiz</title>
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(135deg, #0f0f0f, #1c1c1c, #2b2b2b);
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       color: #fff;
       text-align: center;
-      padding: 0;
-      margin: 0;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-    header {
-      background: #111;
-      padding: 15px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .scrolling-text {
-      font-size: 20px;
-      color: #ffcc00;
-      overflow: hidden;
-      white-space: nowrap;
-      box-sizing: border-box;
-      animation: scroll 15s linear infinite;
-    }
-    @keyframes scroll {
-      0% { transform: translateX(100%); }
-      100% { transform: translateX(-100%); }
     }
     h1 {
-      color: #ffcc00;
-      margin: 20px 0;
       font-size: 2.5rem;
+      margin-top: 40px;
     }
-    .quiz-container {
-      max-width: 700px;
-      margin: 30px auto;
-      background: rgba(34, 34, 34, 0.95);
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 20px rgba(255, 204, 0, 0.5);
+    #startScreen, #quiz, #endScreen {
+      display: none;
+    }
+    button {
+      background: #ff4b2b;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      margin: 10px;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #ff6a4d;
+      transform: scale(1.05);
+    }
+    .question {
+      margin: 20px 0;
+      font-size: 1.3rem;
+    }
+    .answerBtn {
+      display: block;
+      margin: 10px auto;
+      width: 60%;
+    }
+    #scorePopup {
+      position: fixed;
+      top: 20px;
+      right: -200px;
+      background: #28a745;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      transition: right 0.5s ease;
     }
     img {
-      width: 100%;
-      max-height: 300px;
-      object-fit: cover;
-      border-radius: 10px;
-      margin: 15px 0;
-    }
-    .btn {
-      display: block;
-      width: 90%;
-      margin: 8px auto;
-      padding: 14px;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      background: #ffcc00;
-      color: #000;
-      transition: transform 0.2s, background 0.3s;
-    }
-    .btn:hover {
-      background: #ffaa00;
-      transform: scale(1.05);
-    }
-    .correct {
-      background: #28a745 !important;
-      color: #fff;
-    }
-    .wrong {
-      background: #dc3545 !important;
-      color: #fff;
-    }
-    #next-btn, #retry-btn, #home-btn, #start-btn {
-      margin-top: 15px;
-      padding: 12px 20px;
-      font-size: 18px;
-      border: none;
-      border-radius: 8px;
-      background: #007bff;
-      color: #fff;
-      cursor: pointer;
-      transition: background 0.3s, transform 0.2s;
-      display: none;
-    }
-    #next-btn:hover, #retry-btn:hover, #home-btn:hover, #start-btn:hover {
-      background: #0056b3;
-      transform: scale(1.05);
-    }
-    #score-container {
-      display: none;
-      font-size: 22px;
-      margin-top: 15px;
-    }
-    .score-pop {
-      animation: pop 0.5s ease;
-    }
-    @keyframes pop {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.4); }
-      100% { transform: scale(1); }
-    }
-    /* Home screen */
-    #home-screen {
-      margin-top: 80px;
+      max-width: 300px;
+      margin: 15px auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
   </style>
 </head>
 <body>
-  <header>
-    <div class="scrolling-text">🚗 Welcome to Flores and Damon's Car Quiz! Test your car knowledge! 🚗</div>
-  </header>
+  <h1>Flores and Damon's Car Quiz</h1>
 
-  <h1>🚘 Flores and Damon's Car Quiz 🚘</h1>
-
-  <!-- Home Screen -->
-  <div id="home-screen" class="quiz-container">
-    <h2>Are you ready to test your car knowledge?</h2>
-    <button id="start-btn">Start Quiz</button>
+  <!-- Start Screen -->
+  <div id="startScreen">
+    <p>Yo, ready to see if you actually know cars? Hit start and let’s run it.</p>
+    <button onclick="startGame()">Start Quiz</button>
   </div>
 
   <!-- Quiz Screen -->
-  <div id="quiz-screen" class="quiz-container" style="display:none;">
-    <div id="question-container"></div>
-    <div id="answer-buttons"></div>
-    <button id="next-btn">Next</button>
-    <h2 id="score-container"></h2>
-    <button id="retry-btn">Retry</button>
-    <button id="home-btn">Home</button>
+  <div id="quiz">
+    <div id="questionBox"></div>
+    <div id="answersBox"></div>
+    <div id="carImage"></div>
   </div>
 
+  <!-- End Screen -->
+  <div id="endScreen">
+    <h2>Quiz Over 🚗</h2>
+    <p id="finalScore"></p>
+    <button onclick="startGame()">Retry</button>
+    <button onclick="goHome()">Home</button>
+  </div>
+
+  <!-- Score Popup -->
+  <div id="scorePopup">+1 Point!</div>
+
   <!-- Background Music -->
-  <audio id="bg-music" autoplay loop>
-    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  <audio id="bgMusic" loop>
+    <source src="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Scott_Holmes_Music/Corporate__Motivational_Music/Scott_Holmes_Music_-_07_-_Upbeat_Party.mp3" type="audio/mpeg">
   </audio>
 
   <script>
-    const questions = [
-      {
-        question: "What is the 0-60 time of the Corvette C7 Stingray?",
-        image: "https://upload.wikimedia.org/wikipedia/commons/7/7d/2014_Chevrolet_Corvette_stingray_Z51_coupe_--_03-09-2013.jpg",
-        answers: [
-          { text: "3.8 seconds", correct: true },
-          { text: "5.0 seconds", correct: false },
-          { text: "4.5 seconds", correct: false },
-          { text: "2.9 seconds", correct: false }
-        ]
-      },
-      {
-        question: "Which company makes the AMG performance line?",
-        image: "https://upload.wikimedia.org/wikipedia/commons/4/4e/2018_Mercedes-AMG_GT_C_Premium_Auto_4.0_Front.jpg",
-        answers: [
-          { text: "BMW", correct: false },
-          { text: "Mercedes-Benz", correct: true },
-          { text: "Audi", correct: false },
-          { text: "Porsche", correct: false }
-        ]
-      },
-      {
-        question: "What is the 0-60 time of a Tesla Model S Plaid?",
-        image: "https://upload.wikimedia.org/wikipedia/commons/8/87/Tesla_Model_S_Plaid_IMG_4342.jpg",
-        answers: [
-          { text: "1.9 seconds", correct: true },
-          { text: "3.2 seconds", correct: false },
-          { text: "2.5 seconds", correct: false },
-          { text: "4.0 seconds", correct: false }
-        ]
-      },
-      {
-        question: "Ferrari’s logo features what animal?",
-        image: "https://upload.wikimedia.org/wikipedia/en/thumb/3/3d/Ferrari-Logo.svg/1200px-Ferrari-Logo.svg.png",
-        answers: [
-          { text: "Horse", correct: true },
-          { text: "Bull", correct: false },
-          { text: "Lion", correct: false },
-          { text: "Tiger", correct: false }
-        ]
-      },
-      {
-        question: "Which car is nicknamed 'Godzilla'?",
-        image: "https://upload.wikimedia.org/wikipedia/commons/f/f6/Nissan_GT-R_in_Tokyo.JPG",
-        answers: [
-          { text: "Toyota Supra", correct: false },
-          { text: "Nissan GT-R", correct: true },
-          { text: "Mazda RX-7", correct: false },
-          { text: "Acura NSX", correct: false }
-        ]
-      },
-      {
-        question: "What’s the 0-60 time of the Dodge Demon 170?",
-        image: "https://upload.wikimedia.org/wikipedia/commons/5/5b/Dodge_Challenger_SRT_Demon.jpg",
-        answers: [
-          { text: "1.6 seconds", correct: true },
-          { text: "2.8 seconds", correct: false },
-          { text: "3.5 seconds", correct: false },
-          { text: "4.1 seconds", correct: false }
-        ]
-      },
-      {
-        question: "Which Italian brand is famous for the Aventador?",
-        image: "https://upload.wikimedia.org/wikipedia/commons/c/c9/Lamborghini_Aventador_LP700-4_%28Orange%29.jpg",
-        answers: [
-          { text: "Ferrari", correct: false },
-          { text: "Lamborghini", correct: true },
-          { text: "Maserati", correct: false },
-          { text: "Alfa Romeo", correct: false }
-        ]
-      },
-      {
-        question: "Bugatti Chiron’s top speed is over:",
-        image: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Bugatti_Chiron_1.jpg",
-        answers: [
-          { text: "200 mph", correct: false },
-          { text: "300 mph", correct: true },
-          { text: "250 mph", correct: false },
-          { text: "180 mph", correct: false }
-        ]
-      },
-      {
-        question: "The Ford GT was inspired by which race car?",
-        image: "https://upload.wikimedia.org/wikipedia/commons/3/31/Ford_GT_2017_IMG_2839.jpg",
-        answers: [
-          { text: "GT40", correct: true },
-          { text: "Mustang", correct: false },
-          { text: "F-150 Raptor", correct: false },
-          { text: "Shelby Cobra", correct: false }
-        ]
-      },
-      {
-        question: "Which car holds the Nürburgring record (2023)?",
-        image: "https://upload.wikimedia.org/wikipedia/commons/c/ca/Mercedes-AMG_One_IMG_5977.jpg",
-        answers: [
-          { text: "Mercedes-AMG One", correct: true },
-          { text: "Porsche 911 GT3 RS", correct: false },
-          { text: "Lamborghini Huracan", correct: false },
-          { text: "Nissan GT-R Nismo", correct: false }
-        ]
-      }
-    ];
+    const startScreen = document.getElementById('startScreen');
+    const quiz = document.getElementById('quiz');
+    const endScreen = document.getElementById('endScreen');
+    const questionBox = document.getElementById('questionBox');
+    const answersBox = document.getElementById('answersBox');
+    const carImage = document.getElementById('carImage');
+    const scorePopup = document.getElementById('scorePopup');
+    const bgMusic = document.getElementById('bgMusic');
 
-    const homeScreen = document.getElementById("home-screen");
-    const quizScreen = document.getElementById("quiz-screen");
-    const questionContainer = document.getElementById("question-container");
-    const answerButtons = document.getElementById("answer-buttons");
-    const nextButton = document.getElementById("next-btn");
-    const retryButton = document.getElementById("retry-btn");
-    const homeButton = document.getElementById("home-btn");
-    const startButton = document.getElementById("start-btn");
-    const scoreContainer = document.getElementById("score-container");
-
-    let currentQuestionIndex = 0;
+    let currentQuestion = 0;
     let score = 0;
 
-    startButton.addEventListener("click", () => {
-      homeScreen.style.display = "none";
-      quizScreen.style.display = "block";
-      startQuiz();
-    });
+    const questions = [
+      {q: "Which car hits 0-60 in under 3 seconds?", a: ["Toyota Corolla", "Bugatti Chiron", "Honda Civic"], correct: 1, img: "https://cdn.motor1.com/images/mgl/0xQ6p/s1/bugatti-chiron.jpg"},
+      {q: "What brand makes the AMG models?", a: ["BMW", "Mercedes-Benz", "Audi"], correct: 1, img: "https://cdn.motor1.com/images/mgl/WMjjj/s1/mercedes-amg-gt.jpg"},
+      {q: "Corvette C7 first came out in what year?", a: ["2014", "2010", "2005"], correct: 0, img: "https://upload.wikimedia.org/wikipedia/commons/4/4b/2014_Chevrolet_Corvette_--_2013_DC.jpg"},
+      {q: "Which car is nicknamed the 'Godzilla'?", a: ["Nissan GT-R", "Ford Mustang", "Dodge Charger"], correct: 0, img: "https://cdn.motor1.com/images/mgl/6OO4r/s1/nissan-gt-r.jpg"},
+      {q: "Tesla's fastest model is called?", a: ["Model X", "Model S Plaid", "Model 3"], correct: 1, img: "https://cdn.motor1.com/images/mgl/8o7B8/s1/tesla-model-s-plaid.jpg"},
+      {q: "Which Italian brand uses a prancing horse logo?", a: ["Ferrari", "Lamborghini", "Maserati"], correct: 0, img: "https://cdn.motor1.com/images/mgl/6ZZ7r/s1/ferrari.jpg"},
+      {q: "0-60 of Dodge Demon is about?", a: ["2.3s", "5.0s", "7.1s"], correct: 0, img: "https://cdn.motor1.com/images/mgl/2kk9x/s1/2018-dodge-challenger-srt-demon.jpg"},
+      {q: "The Supra is made by?", a: ["Nissan", "Toyota", "Mazda"], correct: 1, img: "https://cdn.motor1.com/images/mgl/Wkk4n/s1/2020-toyota-supra.jpg"},
+      {q: "Which car brand has the 911 Turbo?", a: ["Porsche", "BMW", "Mercedes"], correct: 0, img: "https://cdn.motor1.com/images/mgl/0xjQX/s1/porsche-911-turbo.jpg"},
+      {q: "What American car is known as the 'Vette'?", a: ["Corvette", "Mustang", "Camaro"], correct: 0, img: "https://cdn.motor1.com/images/mgl/QkkOq/s1/2019-chevrolet-corvette-zr1.jpg"}
+    ];
 
-    function startQuiz() {
-      currentQuestionIndex = 0;
+    function goHome() {
+      endScreen.style.display = "none";
+      quiz.style.display = "none";
+      startScreen.style.display = "block";
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+    }
+
+    function startGame() {
       score = 0;
-      scoreContainer.style.display = "none";
-      retryButton.style.display = "none";
-      homeButton.style.display = "none";
+      currentQuestion = 0;
+      startScreen.style.display = "none";
+      endScreen.style.display = "none";
+      quiz.style.display = "block";
+      bgMusic.play();
       showQuestion();
     }
 
     function showQuestion() {
-      resetState();
-      let currentQuestion = questions[currentQuestionIndex];
-      const questionElement = document.createElement("div");
-      questionElement.innerHTML = `<h2>${currentQuestion.question}</h2>
-                                   <img src="${currentQuestion.image}" alt="car">`;
-      questionContainer.appendChild(questionElement);
-
-      currentQuestion.answers.forEach(answer => {
-        const button = document.createElement("button");
-        button.innerText = answer.text;
-        button.classList.add("btn");
-        button.addEventListener("click", () => selectAnswer(button, answer));
-        answerButtons.appendChild(button);
+      let q = questions[currentQuestion];
+      questionBox.innerHTML = `<div class='question'>${q.q}</div>`;
+      answersBox.innerHTML = "";
+      carImage.innerHTML = `<img src="${q.img}" alt="car">`;
+      q.a.forEach((ans, i) => {
+        let btn = document.createElement("button");
+        btn.className = "answerBtn";
+        btn.innerText = ans;
+        btn.onclick = () => checkAnswer(i);
+        answersBox.appendChild(btn);
       });
     }
 
-    function resetState() {
-      questionContainer.innerHTML = "";
-      answerButtons.innerHTML = "";
-      nextButton.style.display = "none";
-    }
-
-    function selectAnswer(button, answer) {
-      const buttons = document.querySelectorAll(".btn");
-      buttons.forEach(b => b.disabled = true);
-
-      if (answer.correct) {
-        button.classList.add("correct");
+    function checkAnswer(i) {
+      if (i === questions[currentQuestion].correct) {
         score++;
-        scoreContainer.style.display = "block";
-        scoreContainer.innerText = `Score: ${score}`;
-        scoreContainer.classList.add("score-pop");
-        setTimeout(() => scoreContainer.classList.remove("score-pop"), 500);
-      } else {
-        button.classList.add("wrong");
+        popupScore();
       }
-
-      questions[currentQuestionIndex].answers.forEach((ans, i) => {
-        if (ans.correct) {
-          buttons[i].classList.add("correct");
-        }
-      });
-
-      nextButton.style.display = "inline-block";
-    }
-
-    nextButton.addEventListener("click", () => {
-      currentQuestionIndex++;
-      if (currentQuestionIndex < questions.length) {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
         showQuestion();
       } else {
-        showFinalScore();
+        endQuiz();
       }
-    });
-
-    function showFinalScore() {
-      resetState();
-      scoreContainer.style.display = "block";
-      scoreContainer.innerText = `✅ Final Score: ${score} out of ${questions.length}!`;
-      retryButton.style.display = "inline-block";
-      homeButton.style.display = "inline-block";
     }
 
-    retryButton.addEventListener("click", startQuiz);
-    homeButton.addEventListener("click", () => {
-      quizScreen.style.display = "none";
-      homeScreen.style.display = "block";
-    });
+    function popupScore() {
+      scorePopup.style.right = "20px";
+      setTimeout(() => {
+        scorePopup.style.right = "-200px";
+      }, 1000);
+    }
+
+    function endQuiz() {
+      quiz.style.display = "none";
+      endScreen.style.display = "block";
+      document.getElementById("finalScore").innerText = `You scored ${score} out of ${questions.length}!`;
+    }
+
+    // show start screen at load
+    goHome();
   </script>
 </body>
 </html>
